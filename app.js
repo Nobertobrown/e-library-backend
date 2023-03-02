@@ -1,4 +1,5 @@
 /******** imports and libraries *******/
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const multer = require("multer");
@@ -12,7 +13,8 @@ const app = express();
 /******** user-defined functions *******/
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "/books");
+    const destPath = path.join(__dirname, "books");
+    cb(null, destPath);
   },
   filename: (req, file, cb) => {
     cb(null, new Date().toISOString() + "-" + file.originalname);
