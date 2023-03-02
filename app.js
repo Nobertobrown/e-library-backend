@@ -12,7 +12,7 @@ const app = express();
 /******** user-defined functions *******/
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./books");
+    cb(null, "/books");
   },
   filename: (req, file, cb) => {
     cb(null, new Date().toISOString() + "-" + file.originalname);
