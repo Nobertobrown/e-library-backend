@@ -52,3 +52,7 @@ exports.postBook = (req, res, next) => {
     book: { _id: new Date().toISOString(), title: title, author: author },
   });
 };
+
+exports.deleteBook = (req,res,next)=>{
+  
+}
