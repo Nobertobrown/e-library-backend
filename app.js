@@ -39,11 +39,7 @@ const filter = (req, file, cb) => {
 app.use(bodyParser.json());
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-app.use(
-  multer({ storage: fileStorage, fileFilter: filter }).fields([
-    { name: "book", maxCount: 1 },
-  ])
-);
+app.use(multer({ storage: fileStorage, fileFilter: filter }).single("book"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -57,8 +53,15 @@ app.use((req, res, next) => {
 
 app.use("/catalogue", catalogueRoutes);
 
+app.use((error, req, res, next) => {
+  console.log(error);
+  const statusCode = error.statusCode || 500;
+  const message = error.message;
+  res.status(statusCode).json({ message: message });
+});
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/library")
+  .connect("mongodb://127.0.0.1:27017/elibrary")
   .then((res) => {
     app.listen(8080, () => {
       console.log("Server started on port 8080");
