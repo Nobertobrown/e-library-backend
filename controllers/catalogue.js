@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Book = require("../models/book");
 
 exports.getBooks = (req, res, next) => {
@@ -35,10 +36,18 @@ exports.getDetails = (req, res, next) => {
 };
 
 exports.postBook = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(422).json({
+      message: "Oops! An error occured while adding a book.",
+      errors: errors,
+    });
+  }
   if (!req.file) {
     const error = new Error("No file provided!");
     error.statusCode = 422;
-    throw error;
+    errors.push(error);
+    res.status(error.statusCode).json({ errors: errors });
   }
   // const title = req.body.title;
   // const author = req.body.author;
