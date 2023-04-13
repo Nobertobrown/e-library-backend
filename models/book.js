@@ -26,8 +26,8 @@ const bookSchema = new Schema(
       required: true,
     },
     rating: {
-      type: Object,
-      required: true,
+      value: { type: Number }, //required: true
+      rates: { type: Number }, //required: true
     },
     languages: {
       type: Array,
@@ -46,7 +46,13 @@ const bookSchema = new Schema(
       type: Array,
       required: true,
     },
-    reviews: Array,
+    reviews: [
+      {
+        userId: { type: Schema.Types.ObjectId, ref: "User" }, //required: true
+        rating: { type: Number },
+        comment: { type: String },
+      },
+    ],
   },
   { timestamps: true }
 );

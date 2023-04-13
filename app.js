@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 
 /******** importing routes *******/
 const catalogueRoutes = require("./routes/catalogue");
+const authRoutes = require("./routes/auth");
 
 /********** initialization **********/
 const app = express();
@@ -52,12 +53,14 @@ app.use((req, res, next) => {
 });
 
 app.use("/catalogue", catalogueRoutes);
+app.use(authRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
   const statusCode = error.statusCode || 500;
   const message = error.message;
-  res.status(statusCode).json({ message: message });
+  const data = error.data;
+  res.status(statusCode).json({ message: message, data: data });
 });
 
 mongoose

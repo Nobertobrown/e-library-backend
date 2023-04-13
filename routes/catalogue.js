@@ -17,7 +17,7 @@ router.post(
     body("author", "Please enter a valid author.").trim().isLength({ max: 15 }),
     body("publisher").trim(),
     body("isbn", "Please enter a valid isbn.").trim().isISBN(),
-    body("publishedAt", "Please enter a valid date.").trim().isDate(),
+    // body("publishedAt", "Please enter a valid date.").trim().isDate(),
     body("languages").trim(),
     body("printLength", "Please enter a valid length.")
       .trim()
@@ -27,7 +27,7 @@ router.post(
     body("tags").trim(),
     body("rating").trim(),
     body("reviews").trim(),
-    body("imgUrl", "Please enter a valid image url.").trim().isURL(),
+    // body("imgUrl", "Please enter a valid image url.").trim().isURL(),
   ],
   catalogueController.postBook
 );
