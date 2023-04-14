@@ -46,13 +46,6 @@ const bookSchema = new Schema(
       type: Array,
       required: true,
     },
-    reviews: [
-      {
-        userId: { type: Schema.Types.ObjectId, ref: "User" }, //required: true
-        rating: { type: Number },
-        comment: { type: String },
-      },
-    ],
   },
   { timestamps: true }
 );

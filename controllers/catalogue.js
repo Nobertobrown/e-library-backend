@@ -43,6 +43,7 @@ exports.postBook = (req, res, next) => {
     error.data = errors.array();
     throw error;
   }
+
   // if (!req.file) {
   //   const error = new Error("No file provided!");
   //   error.statusCode = 422;

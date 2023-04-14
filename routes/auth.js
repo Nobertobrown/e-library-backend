@@ -12,6 +12,14 @@ router.route("/signup").put(
     body("password", "Please enter a strong password")
       .trim()
       .isLength({ min: 6 }),
+    body("confirmPassword", "The passwords entered do not match!")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("The passwords entered do not match!");
+        }
+        return true;
+      }),
     body("email", "Please enter a valid email")
       .trim()
       .isEmail()
