@@ -7,7 +7,8 @@ module.exports = (req, res, next) => {
     error.statusCode = 401;
     throw error;
   }
-  const token = authHeader.split(" ");
+  let token = authHeader.split(" ")[1];
+  token = token.toString();
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, "bentenismyfavoritechildhoodcartoon");
