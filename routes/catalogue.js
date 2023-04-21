@@ -34,4 +34,6 @@ router.post(
   catalogueController.postBook
 );
 
+router.post("/books/:bookId/review", isAuth, catalogueController.postReview);
+
 module.exports = router;

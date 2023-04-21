@@ -1,5 +1,7 @@
 const { validationResult } = require("express-validator");
 const Book = require("../models/book");
+const Review = require("../models/review");
+const User = require("../models/user");
 
 exports.getBooks = (req, res, next) => {
   Book.find()
@@ -56,13 +58,13 @@ exports.postBook = (req, res, next) => {
   const isbn = req.body.isbn;
   const publishedAt = req.body.publishedAt;
   const languages = req.body.languages;
-  const printLength = req.body.printLength;
+  // const printLength = req.body.printLength;
   const fields = req.body.fields;
   const desc = req.body.description;
   const tags = req.body.tags;
   const rating = { value: 5, rates: 2500 };
   const reviews = [];
-  const imgUrl = req.body.imgUrl;
+  // const imgUrl = req.body.imgUrl;
   // const bookUrl = req.file.path;
 
   // create item in db
@@ -97,4 +99,53 @@ exports.postBook = (req, res, next) => {
     });
 };
 
-exports.deleteBook = (req, res, next) => {};
+exports.deleteBook = (req, res, next) => { };
+
+exports.postReview = (req, res, next) => {
+  const userRating = req.body.rating;
+  const userReview = req.body.review;
+  const bookId = req.params.bookId;
+  const userId = req.userId;
+  let creator;
+  let book;
+
+  const review = new Review({
+    userId: userId,
+    bookId: bookId,
+    rating: userRating,
+    review: userReview
+  })
+
+  review
+    .save()
+    .then((result) => {
+      return User.findById(userId);
+    })
+    .then((user) => {
+      creator = user;
+      user.reviews.push(review);
+      return user.save();
+    })
+    .then((result) => {
+      return Book.findById(bookId);
+    })
+    .then((b) => {
+      book = b;
+      book.reviews.push(review);
+      return book.save();
+    })
+    .then((result) => {
+      res.status(201).json({
+        message: "Review saved successfully!",
+        review: review,
+        creator: creator.name,
+        book: book.name
+      })
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+}

@@ -14,10 +14,11 @@ const reviewSchema = new Schema(
       ref: "Book",
       required: true,
     },
-    content: {
-      type: String,
+    rating: {
+      type: Number,
       required: true,
     },
+    review: String,
   },
   { timestamps: true }
 );

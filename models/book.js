@@ -46,6 +46,12 @@ const bookSchema = new Schema(
       type: Array,
       required: true,
     },
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review"
+      }
+    ]
   },
   { timestamps: true }
 );
