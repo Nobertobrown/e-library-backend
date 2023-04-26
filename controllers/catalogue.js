@@ -40,7 +40,7 @@ exports.getDetails = (req, res, next) => {
 exports.postBook = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error("Oops! An error occured while adding a book.");
+    const error = new Error("Oops! An error occured while uploading a book.");
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -56,14 +56,13 @@ exports.postBook = (req, res, next) => {
   const author = req.body.author;
   const publisher = req.body.publisher;
   const isbn = req.body.isbn;
-  const publishedAt = req.body.publishedAt;
-  const languages = req.body.languages;
-  // const printLength = req.body.printLength;
-  const fields = req.body.fields;
+  const publishedAt = req.body.publicationDate;
   const desc = req.body.description;
-  const tags = req.body.tags;
-  const rating = { value: 5, rates: 2500 };
-  const reviews = [];
+  const languages = [...req.body.languages.value];
+  const fields = [...req.body.fields.value];
+  const tags = [...req.body.tags.value];
+  const rating = { value: req.body.rating.value, rates: req.body.rating.rates };
+  // const printLength = req.body.printLength;
   // const imgUrl = req.body.imgUrl;
   // const bookUrl = req.file.path;
 
@@ -77,11 +76,10 @@ exports.postBook = (req, res, next) => {
     description: desc,
     rating: rating,
     languages: languages,
-    printLength: printLength,
-    imgUrl: imgUrl,
+    // printLength: printLength,
+    // imgUrl: imgUrl,
     fields: fields,
     tags: tags,
-    reviews: reviews,
   });
   book
     .save()

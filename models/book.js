@@ -35,11 +35,11 @@ const bookSchema = new Schema(
     },
     printLength: {
       type: Number,
-      required: true,
+      // required: true,
     },
     imgUrl: {
       type: String,
-      required: true,
+      // required: true,
     },
     fields: Array,
     tags: {
