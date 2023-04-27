@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 /******** importing routes *******/
 const catalogueRoutes = require("./routes/catalogue");
 const authRoutes = require("./routes/auth");
+const adminRoutes = require("./routes/admin");
 
 /********** initialization **********/
 const app = express();
@@ -19,7 +20,7 @@ const fileStorage = multer.diskStorage({
     cb(null, destPath);
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
+    cb(null, new Date().toISOString().replace(/:/g, ',') + "-" + file.originalname);
   },
 });
 
@@ -28,7 +29,7 @@ const filter = (req, file, cb) => {
     file.mimetype === "application/pdf" ||
     file.mimetype === "application/msword" ||
     file.mimetype ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ) {
     cb(null, true);
   } else {
@@ -54,6 +55,7 @@ app.use((req, res, next) => {
 
 app.use("/catalogue", catalogueRoutes);
 app.use(authRoutes);
+app.use(adminRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
