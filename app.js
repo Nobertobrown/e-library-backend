@@ -16,11 +16,12 @@ const app = express();
 /******** user-defined functions *******/
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const destPath = path.join(__dirname, "books");
-    cb(null, destPath);
+    cb(null, "books");
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString().replace(/:/g, ',') + "-" + file.originalname);
+    // let ext = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
+    // cb(null, new Date().toISOString().replace(/:/g, ',') + "#-#" + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
@@ -50,12 +51,13 @@ app.use((req, res, next) => {
     "GET, POST, PUT, PATCH, DELETE"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
   next();
 });
 
 app.use("/catalogue", catalogueRoutes);
 app.use(authRoutes);
-app.use(adminRoutes);
+app.use("/admin", adminRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);

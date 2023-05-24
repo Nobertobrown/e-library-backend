@@ -37,7 +37,11 @@ const bookSchema = new Schema(
       type: Number,
       // required: true,
     },
-    imgUrl: {
+    coverUrl: {
+      type: String,
+      // required: true,
+    },
+    bookUrl: {
       type: String,
       // required: true,
     },

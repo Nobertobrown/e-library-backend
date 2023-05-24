@@ -24,6 +24,8 @@ router.put(
   adminController.postBook
 );
 
+router.post("/book/delete", adminController.deleteBook);
+
 module.exports = router;
 
 // TODO

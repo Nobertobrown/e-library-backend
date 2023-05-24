@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 const Book = require("../models/book");
 const Review = require("../models/review");
 const User = require("../models/user");
@@ -76,6 +79,29 @@ exports.postReview = (req, res, next) => {
         creator: creator.name,
         book: book.name
       })
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+}
+
+exports.downloadBook = (req, res, next) => {
+  const bookId = req.params.bookId;
+  Book.findById(bookId)
+    .then((book) => {
+      if (!book) {
+        const error = new Error("Book wasn't found!");
+        error.statusCode = 404;
+        throw error;
+      }
+      const bookPath = book.bookUrl.split(path.sep).join(path.posix.sep);
+      const bookRead = fs.createReadStream(bookPath);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=" + book.title);
+      bookRead.pipe(res);
     })
     .catch((err) => {
       if (!err.statusCode) {

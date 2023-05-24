@@ -1,5 +1,7 @@
 const { validationResult } = require("express-validator");
 const Book = require("../models/book");
+const path = require("path");
+const fileHelper = require("../util/file");
 
 exports.postBook = (req, res, next) => {
   const errors = validationResult(req);
@@ -29,7 +31,7 @@ exports.postBook = (req, res, next) => {
   const rating = { value: req.body.rating.value, rates: req.body.rating.rates };
   const bookUrl = req.file.path;
   // const printLength = req.body.printLength;
-  // const imgUrl = req.body.imgUrl;
+  const coverUrl = "images/os.png";
 
   const book = new Book({
     title: title,
@@ -41,7 +43,8 @@ exports.postBook = (req, res, next) => {
     rating: rating,
     languages: languages,
     // printLength: printLength,
-    // imgUrl: imgUrl,
+    coverUrl: coverUrl,
+    bookUrl: bookUrl,
     fields: fields,
     tags: tags,
   });
@@ -61,4 +64,27 @@ exports.postBook = (req, res, next) => {
     });
 };
 
-exports.deleteBook = (req, res, next) => { };
+exports.deleteBook = (req, res, next) => {
+  const bookId = req.body.bookId;
+
+  Book.findById(bookId)
+    .then((book) => {
+      if (!book) {
+        const error = new Error("Book wasn't found!");
+        error.statusCode = 404;
+        throw error;
+      }
+      fileHelper.deleteFile(book.coverUrl);
+      fileHelper.deleteFile(book.bookUrl);
+      return Book.findByIdAndDelete(bookId);
+    })
+    .then((result) => {
+      console.log("Book Deleted!")
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
