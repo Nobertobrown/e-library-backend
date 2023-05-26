@@ -12,6 +12,8 @@ router.get("/books/:bookId", isAuth, catalogueController.getDetails);
 
 router.get("/books/:bookId/download", catalogueController.downloadBook)
 
+router.get("/books/:bookId/read", catalogueController.readBook)
+
 router.post("/books/:bookId/review", isAuth, catalogueController.postReview);
 
 module.exports = router;
