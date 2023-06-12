@@ -3,12 +3,14 @@ const { body } = require("express-validator");
 
 const adminController = require("../controllers/admin");
 const isAuth = require("../middleware/is-auth");
+const isAdmin = require("../middleware/is-admin");
 
 const router = express.Router();
 
 router.put(
   "/book",
   isAuth,
+  isAdmin,
   [
     body("title", "Please enter a valid title.").trim().isLength({ max: 40 }),
     body("author", "Please enter a valid author.").trim().isLength({ max: 15 }),
@@ -24,7 +26,9 @@ router.put(
   adminController.postBook
 );
 
-router.post("/book/delete", adminController.deleteBook);
+router.post("/book/delete", isAuth, isAdmin, adminController.deleteBook);
+
+router.post("/send-letter", isAuth, isAdmin, adminController.sendNewsletter);
 
 module.exports = router;
 

@@ -1,5 +1,8 @@
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const Book = require("../models/book");
 const Review = require("../models/review");
@@ -132,4 +135,51 @@ exports.readBook = (req, res, next) => {
       }
       next(err);
     });
+}
+
+exports.subscribeNewsletter = (req, res, next) => {
+  const email = req.body.mail;
+  console.log(email);
+  const data = {
+    members: [{
+      email_address: email,
+      status: "subscribed",
+    }]
+  }
+
+  const jsonData = JSON.stringify(data);
+
+  const options = {
+    host: 'us14.api.mailchimp.com',
+    path: `/3.0/lists/${process.env.LIST_ID}`,
+    method: "POST",
+    auth: `kitabu:${process.env.API_KEY}`
+  }
+
+  const subscribe = https.request(options, function (response) {
+    response.on("data", function (data) {
+      if (response.statusCode !== 200) {
+        console.log("Data not found");
+      }
+      console.log(JSON.parse(data));
+    });
+  })
+
+  subscribe.on('error', (e) => {
+    console.error(e);
+  });
+
+  subscribe.on('timeout', function (e) {
+    app.retry_count += 1;
+    console.log("TIMEOUT!");
+    subscribe.destroy();
+  });
+  subscribe.on('uncaughtException', function (e) {
+    app.retry_count += 1;
+    console.log("!!!!");
+    subscribe.destroy();
+  });
+
+  subscribe.write(jsonData);
+  subscribe.end();
 }

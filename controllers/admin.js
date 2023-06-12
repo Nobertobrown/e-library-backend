@@ -2,6 +2,35 @@ const { validationResult } = require("express-validator");
 const Book = require("../models/book");
 const path = require("path");
 const fileHelper = require("../util/file");
+const mailchimp = require("@mailchimp/mailchimp_marketing");
+const dotenv = require('dotenv');
+dotenv.config();
+
+mailchimp.setConfig({
+  apiKey: process.env.API_KEY,
+  server: "us14",
+});
+
+const createNewsletter = async () => {
+  const response = await mailchimp.campaigns.create({
+    type: "regular",
+    recipients: {
+      list_id: process.env.LIST_ID
+    },
+    settings: {
+      subject_line: "Updates from Kitabu",
+      preview_text: "See new books in your favorite online library!",
+      title: "Kitabu",
+      from_name: "nobertobrown@gmail.com",
+      reply_to: "nobertobrown@gmail.com",
+      to_name: "user1",
+      auto_footer: true,
+      template_id: 10030406
+    }
+  });
+
+  return response;
+};
 
 exports.postBook = (req, res, next) => {
   const errors = validationResult(req);
@@ -30,7 +59,7 @@ exports.postBook = (req, res, next) => {
   const tags = [...req.body.tags.value];
   const rating = { value: req.body.rating.value, rates: req.body.rating.rates };
   const bookUrl = req.file.path;
-  // const printLength = req.body.printLength;
+  const printLength = "500";
   const coverUrl = "images/os.png";
 
   const book = new Book({
@@ -42,7 +71,7 @@ exports.postBook = (req, res, next) => {
     description: desc,
     rating: rating,
     languages: languages,
-    // printLength: printLength,
+    printLength: printLength,
     coverUrl: coverUrl,
     bookUrl: bookUrl,
     fields: fields,
@@ -88,3 +117,22 @@ exports.deleteBook = (req, res, next) => {
       next(err);
     });
 };
+
+exports.sendNewsletter = (req, res, next) => {
+  createNewsletter()
+    .then((result) => {
+      return mailchimp.campaigns.send(result.id)
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: "Email Sent!"
+      })
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+}
