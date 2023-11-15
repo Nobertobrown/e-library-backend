@@ -2,6 +2,8 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const dotenv = require("dotenv");
+dotenv.config();
 
 exports.SignUp = (req, res, next) => {
   const errors = validationResult(req);
@@ -45,7 +47,7 @@ exports.Login = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        const error = new Error("User with the given e-mail cannot be found!");
+        const error = new Error("Wrong e-mail or password!");
         error.statusCode = 401;
         throw error;
       }
@@ -54,13 +56,13 @@ exports.Login = (req, res, next) => {
     })
     .then((equal) => {
       if (!equal) {
-        const error = new Error("Wrong Password!");
+        const error = new Error("Wrong e-mail or password!");
         error.statusCode = 401;
         throw error;
       }
       const token = jwt.sign(
         { email: loadedUser.email, userId: loadedUser._id.toString() },
-        "bentenismyfavoritechildhoodcartoon",
+        process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
       res.status(200).json({ token: token, userId: loadedUser._id.toString(), userRole: loadedUser.role });

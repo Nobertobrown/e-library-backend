@@ -10,3 +10,5 @@ module.exports = async (req, res, next) => {
     }
     next();
 }
+
+//TODO: Put better error handling

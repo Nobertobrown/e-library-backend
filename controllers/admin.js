@@ -1,6 +1,5 @@
 const { validationResult } = require("express-validator");
 const Book = require("../models/book");
-const path = require("path");
 const fileHelper = require("../util/file");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
 const dotenv = require('dotenv');
@@ -21,7 +20,7 @@ const createNewsletter = async () => {
       subject_line: "Updates from Kitabu",
       preview_text: "See new books in your favorite online library!",
       title: "Kitabu",
-      from_name: "nobertobrown@gmail.com",
+      from_name: "kitabu@gmail.com",
       reply_to: "nobertobrown@gmail.com",
       to_name: "user1",
       auto_footer: true,
