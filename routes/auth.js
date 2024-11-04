@@ -16,13 +16,9 @@ router.route("/signup").put(
         return User.findOne({ email: value })
           .then((user) => {
             if (user) {
-              Promise.reject("Email address already exists!")
-              // .then((result) => {
-              //   return new Error(result)
-              // }).catch((err) => {
-              //   console.log(err);
-              // });
+              throw new Error("Email address already exists!")
             }
+            return true
           })
           .catch((err) => {
             console.log(err);
@@ -47,4 +43,3 @@ router.route("/signup").put(
 router.route("/login").post(authController.Login);
 
 module.exports = router;
-//TODO: Handle the promise when the email provided already exists
